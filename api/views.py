@@ -100,7 +100,7 @@ def aplicate_model(model, frame):
     Nombres = ["Michael", "Freyner", "Camilo",
                "Viviana", "Daniel", "Yesid", "Alfonso"]
 
-    return Nombres[int(Prediccion[0])-1]
+    return Nombres[int(Prediccion[0])-1], Recorte
 
 
 def readModelFace(frame):
@@ -114,8 +114,8 @@ def readModelFace(frame):
         with open(current_directory, 'rb') as f:
             modelo_entrenado = joblib.load(f)
 
-        response = aplicate_model(modelo_entrenado, frame)
-        return response
+        response, recorte = aplicate_model(modelo_entrenado, frame)
+        return response, recorte
     except:
         return 0
 
@@ -126,9 +126,12 @@ def start_camera(request):
         stop_flag = True
 
     def generate_qr_code(frame):
-        base64Frame = base64.b64encode(
-            cv2.imencode('.jpg', frame)[1]).decode('utf-8')
-        img = qrcode.make(base64Frame)
+        # Convertir la imagen a base64
+        img_bytes = cv2.imencode('.jpg', frame)[1].tobytes()
+        base64_img = base64.b64encode(img_bytes).decode('utf-8')
+        # base64Frame = base64.b64encode(cv2.imencode('.jpg', frame)[1]).decode('utf-8')
+        print(base64_img)
+        img = qrcode.make(base64_img)
         type(img)
         img.save("qr.png")
 
@@ -170,11 +173,14 @@ def start_camera(request):
 
         # Generar el código QR a partir del frame actual
 
-        scan_result = readModelFace(video_frame)
+        scan_result, recorte = readModelFace(video_frame)
         print(scan_result)
 
+        # plt.imshow(recorte.astype('uint8'), cmap='gray', vmin=0, vmax=255)
+        # plt.show()
+
         if scan_result != 0:
-            qr_image_base64 = generate_qr_code(faces)
+            qr_image_base64 = generate_qr_code(recorte)
             threading.Timer(2.0, stop_camera).start()
             # stop_camera()
         else:
