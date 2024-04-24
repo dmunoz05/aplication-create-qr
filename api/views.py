@@ -168,7 +168,8 @@ def start_camera(request):
 
         if scan_result != 0:
             qr_image_base64 = generate_qr_code(faces)
-            stop_camera()
+            threading.Timer(2.0, stop_camera).start()
+            # stop_camera()
         else:
             qr_image_base64 = None
             scan_result = 'None'
