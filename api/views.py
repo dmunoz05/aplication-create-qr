@@ -19,20 +19,7 @@ def bienvenido(request):
     return render(request, 'app/welcome.html')
 
 
-# def createQR(request):
-#     texto = "Hola, mundo!"
-#     qr_code = qrcode.create(texto)
-
-#     # Generar la imagen QR en formato PNG como un objeto BytesIO
-#     buffer = io.BytesIO()
-#     qr_code.png(buffer, scale=5, module_size=15)
-#     buffer.seek(0)
-
-#     # Devolver la imagen como respuesta HTTP
-#     return HttpResponse(buffer, content_type="image/png")
-
 def start_camera(request):
-
     def stop_camera():
         global stop_flag
         stop_flag = True
@@ -40,9 +27,14 @@ def start_camera(request):
     def generate_qr_code(frame):
         img = qrcode.make(frame)
         type(img)
-        img.save("michael.png")
+        img.save("qr.png")
 
-        return img
+        # Leer la imagen desde el archivo
+        with open("qr.png", "rb") as img_file:
+            # Codificar la imagen como base64
+            image_data = base64.b64encode(img_file.read()).decode("utf-8")
+
+        return image_data
 
     def detect_bounding_box(vid):
         face_classifier = cv2.CascadeClassifier(
@@ -71,7 +63,10 @@ def start_camera(request):
         faces = detect_bounding_box(video_frame)
 
         # Generar el código QR a partir del frame actual
-        qr_image = generate_qr_code(faces)
+        qr_image_base64  = generate_qr_code(faces)
+
+        # Aquí devuelvo un mensaje JSON indicando que la imagen ha sido procesada
+        # return HttpResponse(image_data, content_type="image/png")
 
         # display the processed frame in a window named "My Face Detection Project"
         cv2.imshow("My Face Detection Project", video_frame)
@@ -82,4 +77,4 @@ def start_camera(request):
     video_capture.release()
     cv2.destroyAllWindows()
 
-    return JsonResponse({'redirect_url': 'http://127.0.0.1:8000/welcome/'})
+    return JsonResponse({'qr': qr_image_base64 })
