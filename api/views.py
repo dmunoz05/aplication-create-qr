@@ -16,11 +16,14 @@ import cv2
 import os
 import io
 
+
 def index(request):
     return render(request, "app/index.html")
 
+
 def bienvenido(request):
     return render(request, 'app/welcome.html')
+
 
 def aplicate_model(model, frame):
     cwd = os.getcwd()
@@ -77,8 +80,9 @@ def aplicate_model(model, frame):
     Particiones = Filas_2/4
 
     for (x, y, w, h) in Cara:
-        Recorte = I_gris[y:y+h,x:x+w]
-        Recorte = cv2.resize(Recorte, (Filas_2,Columnas_2), interpolation = cv2.INTER_AREA)
+        Recorte = I_gris[y:y+h, x:x+w]
+        Recorte = cv2.resize(Recorte, (Filas_2, Columnas_2),
+                             interpolation=cv2.INTER_AREA)
         # plt.imshow(Recorte.astype('uint8'),cmap='gray',vmin=0, vmax=255)
         # plt.show()
 
@@ -94,7 +98,7 @@ def aplicate_model(model, frame):
     Prediccion = model.predict(Matriz_Características)
 
     Nombres = ["Michael", "Freyner", "Camilo",
-               "Viviana", "Daniel", "Yesid", "Brian"]
+               "Viviana", "Daniel", "Yesid", "Alfonso"]
 
     return Nombres[int(Prediccion[0])-1]
 
@@ -115,13 +119,16 @@ def readModelFace(frame):
     except:
         return 0
 
+
 def start_camera(request):
     def stop_camera():
         global stop_flag
         stop_flag = True
 
     def generate_qr_code(frame):
-        img = qrcode.make(frame)
+        base64Frame = base64.b64encode(
+            cv2.imencode('.jpg', frame)[1]).decode('utf-8')
+        img = qrcode.make(base64Frame)
         type(img)
         img.save("qr.png")
 
