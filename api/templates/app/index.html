@@ -43,7 +43,7 @@
       <button id="start-camera">Start</button>
     </div>
     <div id="qr-container" class="display">
-      <h2 id="title_qr" >QR with your face</h2>
+      <h2 id="title_qr" >QR with your face <span id="name"><span></h2>
       <img id="qr-image" src="" alt="QR Code" />
     </div>
 
@@ -51,16 +51,15 @@
       document
         .getElementById("start-camera")
         .addEventListener("click", function () {
-          debugger;
           fetch("/start/")
             .then((response) => response.json())
             .then((data) => {
-              debugger
               // Agrega la variable data aquí
               if (data.qr) {
                 document.querySelector(".login-container").classList.add("display")
                 document.getElementById("qr-container").classList.remove("display")
                 document.getElementById("qr-image").src = "data:image/png;base64," + data.qr;
+                document.getElementById("name").innerHTML = data.scan;
               }
             })
             .catch((error) => {
