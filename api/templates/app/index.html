@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear QR</title>
+    {% load static %}
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static 'css/assets/favicon.png' %}"
+    />
+    <link rel="stylesheet" href="{% static 'css/styles/index.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="title-container">
+        <svg
+          width="64"
+          height="64"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#000000"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M4 8v-2a2 2 0 0 1 2 -2h2" />
+          <path d="M4 16v2a2 2 0 0 0 2 2h2" />
+          <path d="M16 4h2a2 2 0 0 1 2 2v2" />
+          <path d="M16 20h2a2 2 0 0 0 2 -2v-2" />
+          <path d="M7 12c3.333 -4.667 6.667 -4.667 10 0" />
+          <path d="M7 12c3.333 4.667 6.667 4.667 10 0" />
+          <path d="M12 12h-.01" />
+        </svg>
+        <h2>Create QR with face</h2>
+      </div>
+      <button id="start-camera">Start</button>
+    </div>
+
+    <script>
+      document
+        .getElementById("start-camera")
+        .addEventListener("click", function () {
+          debugger;
+          fetch("/start/")
+            .then((response) => response.json())
+            .then((data) => {
+              // Agrega la variable data aquí
+              debugger;
+              if (data.redirect_url) {
+                // Usa data en lugar de response
+                console.log("Cámara encendida correctamente");
+                window.location.href = data.redirect_url;
+              } else {
+                console.error("Error al encender la cámara");
+              }
+            })
+            .catch((error) => {
+              debugger;
+              console.error("Error:", error);
+            });
+        });
+    </script>
+  </body>
+</html>

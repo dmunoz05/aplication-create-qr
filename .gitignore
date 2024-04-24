@@ -1,0 +1,9 @@
+node_modules/
+schema.sql
+venv/
+db.sqlite3
+env/
+api/__pycache__
+appqr/__pycache__
+.vscode/
+.env
